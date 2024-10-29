@@ -23,44 +23,34 @@ import { Input } from "../ui/input";
 
 // Schema for signup form
 const signupSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  age: z.number().min(1, {
-    message: "Age is required",
-  }),
-  fullname: z.string().min(1, {
-    message: "Full name is required",
-  }),
-  facultyId: z.string().min(1, {
-    // Changed to string
-    message: "Faculty is required",
-  }),
-  country: z.string().min(1, {
-    message: "Country is required",
-  }),
-  email: z.string().email({
-    message: "Invalid email address",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
+  username: z.string().min(2, { message: "Username must be at least 2 characters." }),
+  age: z.number().positive({ message: "Age is required" }),
+  fullname: z.string().min(1, { message: "Full name is required" }),
+  facultyId: z.number().positive({ message: "Faculty is required" }),
+  country: z.string().min(1, { message: "Country is required" }),
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
   gender: z.string().optional(),
 });
 
 // Schema for login form
 const loginSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
+  username: z.string().min(2, { message: "Username must be at least 2 characters." }),
+  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
 });
 
-type Props = {};
+type studentSignUpDetails = {
+  username: string;
+  age: number;
+  fullname: string;
+  facultyId: number;
+  country: string;
+  email: string;
+  password: string;
+  gender?: string;
+};
 
-const Student = (props: Props) => {
+const Student = () => {
   const [isLogin, setIsLogin] = useState(false);
 
   const form = useForm<z.infer<typeof signupSchema | typeof loginSchema>>({
@@ -68,18 +58,18 @@ const Student = (props: Props) => {
     defaultValues: {
       username: "",
       password: "",
-      age: 0,
+      age: 18,
       country: "",
       email: "",
       fullname: "",
-      facultyId: "",
+      facultyId: 1,
       gender: "Male",
     },
   });
 
-  function onSubmit(values: z.infer<typeof signupSchema | typeof loginSchema>) {
+  function onSubmit(values: studentSignUpDetails | z.infer<typeof loginSchema>) {
     if (!isLogin) {
-      const signupValues = values as z.infer<typeof signupSchema>; // Type assertion for signup values
+      const signupValues = values as studentSignUpDetails;
       studentSignUp(signupValues);
     } else {
       const loginValues = values as z.infer<typeof loginSchema>;
@@ -129,8 +119,8 @@ const Student = (props: Props) => {
                   <FormItem>
                     <FormLabel>Faculty</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      onValueChange={(value) => field.onChange(Number(value))}
+                      defaultValue={field.value.toString()}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -138,8 +128,7 @@ const Student = (props: Props) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {/* Replace with actual faculty options */}
-                        <SelectItem value="1">Faculty of Science</SelectItem>
+                        <SelectItem value="300">Faculty of Science</SelectItem>
                         <SelectItem value="2">Faculty of Arts</SelectItem>
                       </SelectContent>
                     </Select>
@@ -147,16 +136,14 @@ const Student = (props: Props) => {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="gender"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Gender</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Gender" />
@@ -185,6 +172,7 @@ const Student = (props: Props) => {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="email"
@@ -203,160 +191,161 @@ const Student = (props: Props) => {
                 control={form.control}
                 name="country"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Country</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Where are you from?" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {[
-                          "Afghanistan",
-                          "Albania",
-                          "Algeria",
-                          "Andorra",
-                          "Angola",
-                          "Antigua and Barbuda",
-                          "Argentina",
-                          "Armenia",
-                          "Australia",
-                          "Austria",
-                          "Azerbaijan",
-                          "Bahamas",
-                          "Bahrain",
-                          "Bangladesh",
-                          "Barbados",
-                          "Belarus",
-                          "Belgium",
-                          "Belize",
-                          "Benin",
-                          "Bhutan",
-                          "Bolivia",
-                          "Bosnia and Herzegovina",
-                          "Botswana",
-                          "Brazil",
-                          "Brunei",
-                          "Bulgaria",
-                          "Burkina Faso",
-                          "Burundi",
-                          "Cabo Verde",
-                          "Cambodia",
-                          "Cameroon",
-                          "Canada",
-                          "Central African Republic",
-                          "Chad",
-                          "Chile",
-                          "China",
-                          "Colombia",
-                          "Comoros",
-                          "Congo",
-                          "Costa Rica",
-                          "Croatia",
-                          "Cuba",
-                          "Cyprus",
-                          "Czech Republic",
-                          "Democratic Republic of the Congo",
-                          "Denmark",
-                          "Djibouti",
-                          "Dominica",
-                          "Dominican Republic",
-                          "East Timor",
-                          "Ecuador",
-                          "Egypt",
-                          "El Salvador",
-                          "Equatorial Guinea",
-                          "Eritrea",
-                          "Estonia",
-                          "Eswatini",
-                          "Ethiopia",
-                          "Fiji",
-                          "Finland",
-                          "France",
-                          "Gabon",
-                          "Gambia",
-                          "Georgia",
-                          "Germany",
-                          "Ghana",
-                          "Greece",
-                          "Grenada",
-                          "Guatemala",
-                          "Guinea",
-                          "Guinea-Bissau",
-                          "Guyana",
-                          "Haiti",
-                          "Honduras",
-                          "Hungary",
-                          "Iceland",
-                          "India",
-                          "Indonesia",
-                          "Iran",
-                          "Iraq",
-                          "Ireland",
-                          "Israel",
-                          "Italy",
-                          "Jamaica",
-                          "Japan",
-                          "Jordan",
-                          "Kazakhstan",
-                          "Kenya",
-                          "Kiribati",
-                          "North Korea",
-                          "South Korea",
-                          "Kuwait",
-                          "Kyrgyzstan",
-                          "Laos",
-                          "Latvia",
-                          "Lebanon",
-                          "Lesotho",
-                          "Liberia",
-                          "Libya",
-                          "Liechtenstein",
-                          "Lithuania",
-                          "Luxembourg",
-                          "Madagascar",
-                          "Malawi",
-                          "Malaysia",
-                          "Maldives",
-                          "Mali",
-                          "Malta",
-                          "Marshall Islands",
-                          "Mauritania",
-                          "Mauritius",
-                          "Mexico",
-                          "Micronesia",
-                          "Moldova",
-                          "Monaco",
-                          "Mongolia",
-                          "Montenegro",
-                          "Morocco",
-                          "Mozambique",
-                          "Myanmar",
-                          "Namibia",
-                          "Nauru",
-                          "Nepal",
-                          "Netherlands",
-                          "New Zealand",
-                          "Nicaragua",
-                          "Niger",
-                          "Nigeria",
-                          // Add more countries as needed
-                        ].map((country) => (
-                          <SelectItem
-                            key={country.toLowerCase().replace(/\s+/g, "-")}
-                            value={country}
-                          >
-                            {country}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
+
+                    <FormItem>
+                      <FormLabel>Country</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Where are you from?" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {[
+                            "Afghanistan",
+                            "Albania",
+                            "Algeria",
+                            "Andorra",
+                            "Angola",
+                            "Antigua and Barbuda",
+                            "Argentina",
+                            "Armenia",
+                            "Australia",
+                            "Austria",
+                            "Azerbaijan",
+                            "Bahamas",
+                            "Bahrain",
+                            "Bangladesh",
+                            "Barbados",
+                            "Belarus",
+                            "Belgium",
+                            "Belize",
+                            "Benin",
+                            "Bhutan",
+                            "Bolivia",
+                            "Bosnia and Herzegovina",
+                            "Botswana",
+                            "Brazil",
+                            "Brunei",
+                            "Bulgaria",
+                            "Burkina Faso",
+                            "Burundi",
+                            "Cabo Verde",
+                            "Cambodia",
+                            "Cameroon",
+                            "Canada",
+                            "Central African Republic",
+                            "Chad",
+                            "Chile",
+                            "China",
+                            "Colombia",
+                            "Comoros",
+                            "Congo",
+                            "Costa Rica",
+                            "Croatia",
+                            "Cuba",
+                            "Cyprus",
+                            "Czech Republic",
+                            "Democratic Republic of the Congo",
+                            "Denmark",
+                            "Djibouti",
+                            "Dominica",
+                            "Dominican Republic",
+                            "East Timor",
+                            "Ecuador",
+                            "Egypt",
+                            "El Salvador",
+                            "Equatorial Guinea",
+                            "Eritrea",
+                            "Estonia",
+                            "Eswatini",
+                            "Ethiopia",
+                            "Fiji",
+                            "Finland",
+                            "France",
+                            "Gabon",
+                            "Gambia",
+                            "Georgia",
+                            "Germany",
+                            "Ghana",
+                            "Greece",
+                            "Grenada",
+                            "Guatemala",
+                            "Guinea",
+                            "Guinea-Bissau",
+                            "Guyana",
+                            "Haiti",
+                            "Honduras",
+                            "Hungary",
+                            "Iceland",
+                            "India",
+                            "Indonesia",
+                            "Iran",
+                            "Iraq",
+                            "Ireland",
+                            "Israel",
+                            "Italy",
+                            "Jamaica",
+                            "Japan",
+                            "Jordan",
+                            "Kazakhstan",
+                            "Kenya",
+                            "Kiribati",
+                            "North Korea",
+                            "South Korea",
+                            "Kuwait",
+                            "Kyrgyzstan",
+                            "Laos",
+                            "Latvia",
+                            "Lebanon",
+                            "Lesotho",
+                            "Liberia",
+                            "Libya",
+                            "Liechtenstein",
+                            "Lithuania",
+                            "Luxembourg",
+                            "Madagascar",
+                            "Malawi",
+                            "Malaysia",
+                            "Maldives",
+                            "Mali",
+                            "Malta",
+                            "Marshall Islands",
+                            "Mauritania",
+                            "Mauritius",
+                            "Mexico",
+                            "Micronesia",
+                            "Moldova",
+                            "Monaco",
+                            "Mongolia",
+                            "Montenegro",
+                            "Morocco",
+                            "Mozambique",
+                            "Myanmar",
+                            "Namibia",
+                            "Nauru",
+                            "Nepal",
+                            "Netherlands",
+                            "New Zealand",
+                            "Nicaragua",
+                            "Niger",
+                            "Nigeria",
+                            // Add more countries as needed
+                          ].map((country) => (
+                            <SelectItem
+                              key={country.toLowerCase().replace(/\s+/g, "-")}
+                              value={country}
+                            >
+                              {country}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
                 )}
               />
             </>
