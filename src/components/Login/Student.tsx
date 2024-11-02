@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { studentSignUp } from "@/core/http-client";
+import { studentLogin, studentSignUp } from "@/core/http-client";
 import {
   Form,
   FormControl,
@@ -73,7 +73,7 @@ const Student = () => {
       studentSignUp(signupValues);
     } else {
       const loginValues = values as z.infer<typeof loginSchema>;
-      // Handle login logic here
+      studentLogin(loginValues)
     }
   }
 

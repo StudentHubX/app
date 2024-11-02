@@ -3,6 +3,8 @@ import "@/styles/globals.css";
 import { Metadata } from "next";
 import type { AppProps } from "next/app";
 import { poppins } from "@/lib/fonts";
+import { useEffect } from "react";
+import useUserState from "@/core/useStore";
 
 export const metadata: Metadata = {
   title: "StudentHubX",
@@ -10,6 +12,12 @@ export const metadata: Metadata = {
 };
 
 export default function App({ Component, pageProps }: AppProps) {
+  const setUserAsync = useUserState(state => state.setUserAsync)
+ 
+  useEffect(() => {
+    setUserAsync()
+  },[])
+ 
   return (
     <div className={`${poppins}`}>
       <Layout className="poppins">
