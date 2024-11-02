@@ -7,6 +7,7 @@ interface User {
   email: string;
   username: string;
   country: string;
+  socials: {type: 'INSTAGRAM' | 'X', username: string}[]
 }
 
 interface UserState {
