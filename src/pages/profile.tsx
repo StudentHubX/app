@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import useUserState from "@/core/useStore";
 import { Button } from "@/components/ui/button";
-import { FaShare } from "react-icons/fa";
+import { FaShare, FaTwitter, FaInstagram } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 import { getInitials } from "@/lib/utils";
 import {
   Dialog,
@@ -24,7 +25,7 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { addSocialToUser } from "@/core/http-client";
+import { addSocialToUser } from "@/core/student-http-client";
 
 function useMediaQuery(query: any) {
   const [matches, setMatches] = useState(false);
@@ -58,6 +59,33 @@ const UserPhotoAndCover = () => {
   );
 };
 
+const SocialMediaLinks = () => {
+  const user = useUserState((state) => state.user);
+  const socials = user?.socials?.socialsData || [];
+
+  return (
+    <div className="flex gap-4 mt-4 md:ml-24 items-center justify-center text-center">
+      {socials.map((social) => {
+        if (social.type === "X" && social.username !== "") {
+          return (
+            <Button variant="outline" key="1">
+              <FaXTwitter className="" />@{social.username}
+            </Button>
+          );
+        }
+        if (social.type === "INSTAGRAM" && social.username !== "") {
+          return (
+            <Button variant="outline" key="2">
+              <FaInstagram className="" />@{social.username}
+            </Button>
+          );
+        }
+        return null;
+      })}
+    </div>
+  );
+};
+
 const Profile = () => {
   const user = useUserState((state) => state.user);
 
@@ -69,10 +97,11 @@ const Profile = () => {
           {user?.fullname}
         </p>
         <p className="text-xs md:text-sm text-gray-500">{user?.country}</p>
-        <div className="flex items-center justify-center md:justify-start mt-2">
+        {/* <div className="flex items-center justify-center md:justify-start mt-2">
           <p className="text-sm md:text-base">@{user?.username}</p>
-        </div>
+        </div> */}
       </div>
+      <SocialMediaLinks />
       <div className="flex justify-center md:justify-start mt-4 ml-0 md:ml-24">
         <Button variant="outline">
           <FaShare />
@@ -91,9 +120,9 @@ function DrawerDialogDemo() {
   return isDesktop ? (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
+        <Button variant="secondary" className="bg-black text-white"> Edit Profile</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] ">
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
@@ -106,9 +135,9 @@ function DrawerDialogDemo() {
   ) : (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
+        <Button variant="secondary" className="bg-black text-white">Edit Profile</Button>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="p-10">
         <DrawerHeader>
           <DrawerTitle>Edit profile</DrawerTitle>
           <DrawerDescription>
@@ -126,42 +155,52 @@ function DrawerDialogDemo() {
   );
 }
 
-
 function ProfileForm({ className }: any) {
   const user = useUserState((state) => state.user);
 
-  // Initialize state for socials with default values from `user.socials`
   const [socials, setSocials] = useState({
-    X: user?.socials?.find((social) => social.type === "X")?.username || "",
-    INSTAGRAM: user?.socials?.find((social) => social.type === "INSTAGRAM")?.username || ""
+    X: "",
+    INSTAGRAM: "",
   });
 
-  // Handler to update state on input change
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (user?.socials) {
+      const initialSocials = {
+        X:
+          user.socials.socialsData.find((social) => social.type === "X")
+            ?.username || "",
+        INSTAGRAM:
+          user.socials.socialsData.find((social) => social.type === "INSTAGRAM")
+            ?.username || "",
+      };
+      setSocials(initialSocials);
+    }
+  }, [user?.socials]);
+
+  const handleInputChange = (event: any) => {
     const { id, value } = event.target;
     setSocials((prevSocials) => ({
       ...prevSocials,
-      [id.toUpperCase()]: value  // Using ID to map directly to the type
+      [id]: value,
     }));
   };
 
-  
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
-    
-  
+
     const socialsData = Object.entries(socials).map(([type, username]) => ({
       type,
-      username
+      username,
     }));
-
-    console.log("Socials Data:", socialsData);
-    await addSocialToUser(socialsData)
-     
+    await addSocialToUser(socialsData);
+    
   };
 
   return (
-    <form onSubmit={handleSubmit} className={`grid items-start gap-4 ${className}`}>
+    <form
+      onSubmit={handleSubmit}
+      className={`grid items-start gap-4 ${className}`}
+    >
       <div className="grid gap-2">
         <Label htmlFor="X">X</Label>
         <Input
@@ -184,8 +223,5 @@ function ProfileForm({ className }: any) {
     </form>
   );
 }
-
-
-
 
 export default Profile;

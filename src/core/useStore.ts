@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getStudent } from "./http-client";
+import { getStudent } from "./student-http-client";
 
 interface User {
   id: string;
@@ -7,7 +7,10 @@ interface User {
   email: string;
   username: string;
   country: string;
-  socials: {type: 'INSTAGRAM' | 'X', username: string}[]
+  socials: {
+    socialsData: {type: 'INSTAGRAM' | 'X', username: string}[]
+  },
+  isStudent: boolean
 }
 
 interface UserState {

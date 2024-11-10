@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { studentLogin, studentSignUp } from "@/core/http-client";
+import { studentLogin, studentSignUp } from "@/core/student-http-client";
 import {
   Form,
   FormControl,
@@ -128,7 +128,7 @@ const Student = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="300">Faculty of Science</SelectItem>
+                        <SelectItem value="317">Faculty of Engineering</SelectItem>
                         <SelectItem value="2">Faculty of Arts</SelectItem>
                       </SelectContent>
                     </Select>

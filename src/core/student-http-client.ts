@@ -1,9 +1,10 @@
 import axios from "axios";
 import { studentSignUpDetails, studentLoginDetails } from "./dto/user.dto";
+import { postDetails } from "./dto/posts.dto";
 
 const backendUrl = "http://localhost:3000";
 
-export const addSocialToUser = async(socialsData: {type: string, username: string}[]) => {
+export const addSocialToUser = async (socialsData: { type: string; username: string }[]) => {
   try {
     const accessToken = localStorage.getItem("access-key");
 
@@ -11,16 +12,20 @@ export const addSocialToUser = async(socialsData: {type: string, username: strin
       throw new Error("No access token found. Please log in.");
     }
 
-    const user = await axios.post(`${backendUrl}/student/addSocial`, {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
+    const user = await axios.post(
+      `${backendUrl}/student/addSocial`,
+      {
+        socialsData // This is the request body
       },
-      data: socialsData
-    });
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // Headers should be in this third argument
+        },
+      }
+    );
 
-    console.log(user)
+    console.log(user);
 
-    
   } catch (error) {
     console.error("Error adding socials", error);
 
@@ -31,7 +36,7 @@ export const addSocialToUser = async(socialsData: {type: string, username: strin
 
     throw error;
   }
-}
+};
 
 export const getStudent = async () => {
   try {
@@ -54,7 +59,7 @@ export const getStudent = async () => {
       username: user.data.username,
       country:  user.data.country,
       socials:  user.data.socials,
-
+      isStudent: user.data.isStudent
     };
   } catch (error) {
     console.error("Error finding student:", error);
@@ -117,3 +122,28 @@ export const studentLogin = async (data: studentLoginDetails) => {
     throw error;
   }
 };
+
+export const createPost = async (data: postDetails) => {
+  try {
+    const accessToken = localStorage.getItem("access-key");
+
+    const newPost = await axios.post(`${backendUrl}/posts/create`, 
+      {
+      title: data.title,
+      content: data.content,
+      authorId: data.authorId,
+      isStudent: data.isStudent
+    },
+    {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      }
+    })
+
+    return {newPost}
+
+  } catch (error) {
+     console.error("Error creating post", error);
+    throw error;
+  }
+}
