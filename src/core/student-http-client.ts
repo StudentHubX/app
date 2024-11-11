@@ -4,7 +4,9 @@ import { postDetails } from "./dto/posts.dto";
 
 const backendUrl = "http://localhost:3000";
 
-export const addSocialToUser = async (socialsData: { type: string; username: string }[]) => {
+export const addSocialToUser = async (
+  socialsData: { type: string; username: string }[]
+) => {
   try {
     const accessToken = localStorage.getItem("access-key");
 
@@ -15,7 +17,7 @@ export const addSocialToUser = async (socialsData: { type: string; username: str
     const user = await axios.post(
       `${backendUrl}/student/addSocial`,
       {
-        socialsData // This is the request body
+        socialsData, // This is the request body
       },
       {
         headers: {
@@ -25,7 +27,6 @@ export const addSocialToUser = async (socialsData: { type: string; username: str
     );
 
     console.log(user);
-
   } catch (error) {
     console.error("Error adding socials", error);
 
@@ -48,18 +49,19 @@ export const getStudent = async () => {
 
     const user = await axios.get(`${backendUrl}/student/profile`, {
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
+    console.log(user.data)
 
     return {
       id: user.data.userId,
       fullname: user.data.fullname,
       email: user.data.email,
       username: user.data.username,
-      country:  user.data.country,
-      socials:  user.data.socials,
-      isStudent: user.data.isStudent
+      country: user.data.country,
+      socials: user.data.socials,
+      isStudent: user.data.isStudent,
     };
   } catch (error) {
     console.error("Error finding student:", error);
@@ -71,7 +73,7 @@ export const getStudent = async () => {
 
     throw error;
   }
-};  
+};
 // Function for student sign-up
 export const studentSignUp = async (data: studentSignUpDetails) => {
   try {
@@ -127,23 +129,59 @@ export const createPost = async (data: postDetails) => {
   try {
     const accessToken = localStorage.getItem("access-key");
 
-    const newPost = await axios.post(`${backendUrl}/posts/create`, 
+    const newPost = await axios.post(
+      `${backendUrl}/posts/create`,
       {
-      title: data.title,
-      content: data.content,
-      authorId: data.authorId,
-      isStudent: data.isStudent
-    },
-    {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        title: data.title,
+        content: data.content,
+        authorId: data.authorId,
+        isStudent: data.isStudent,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       }
-    })
+    );
 
-    return {newPost}
-
+    return { newPost };
   } catch (error) {
-     console.error("Error creating post", error);
+    console.error("Error creating post", error);
     throw error;
   }
-}
+};
+
+export const getFeed = async () => {
+  const accessToken = localStorage.getItem("access-key");
+
+  try {
+    const retrievedPosts = await axios.get(`${backendUrl}/student/feed`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    // Map the response data to match the Post schema
+    const posts = retrievedPosts.data.map((post: any) => {
+      return {
+        id: post.id,
+        title: post.title,
+        content: post.content,
+        createdAt: post.createdAt,
+        student: post.student ? {
+          username: post.student.username,
+          fullname: post.student.fullname,
+        } : null,
+        professional: post.professional ? {
+          username: post.professional.username,
+          fullname: post.professional.fullname,
+        } : null,
+      };
+    });
+
+    return posts;
+  } catch (error) {
+    console.log("Error fetching posts:", error);
+    throw error;
+  }
+};
