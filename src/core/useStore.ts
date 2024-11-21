@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getStudent } from "./student-http-client";
+import { getStudent } from "./user-http-client";
 
 interface User {
   id: string;
@@ -8,18 +8,21 @@ interface User {
   username: string;
   country: string;
   socials: {
-    socialsData: {type: 'INSTAGRAM' | 'X', username: string}[]
-  },
-  isStudent: boolean
+    socialsData: { type: 'INSTAGRAM' | 'X'; username: string }[];
+  };
+  isStudent: boolean;
 }
 
 interface UserState {
   user: User | null;
   setUserAsync: () => Promise<void>;
+  logout: () => void;
 }
 
 const useUserState = create<UserState>((set) => ({
   user: null,
+
+  // Fetch and set user data
   setUserAsync: async () => {
     try {
       const userData = await getStudent();
@@ -28,6 +31,15 @@ const useUserState = create<UserState>((set) => ({
       console.error("Failed to fetch user data:", error);
     }
   },
+
+  // Log out the user by setting user to null
+  logout: () => {
+    localStorage.removeItem('access-key')
+    console.log(" juetjnrss")
+    set({ user: null });
+    // Optional: add any additional cleanup here, like clearing local storage
+    // localStorage.removeItem("userData");
+  }
 }));
 
 export default useUserState;

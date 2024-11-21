@@ -88,7 +88,7 @@ const SocialMediaLinks = () => {
 
 const Profile = () => {
   const user = useUserState((state) => state.user);
-
+  const logout = useUserState((state) => state.logout)
   return (
     <div>
       <UserPhotoAndCover />
@@ -106,6 +106,9 @@ const Profile = () => {
         <Button variant="outline">
           <FaShare />
           Share Profile
+        </Button>
+        <Button variant="destructive" onClick={() => logout()}>
+          Logout
         </Button>
         <DrawerDialogDemo />
       </div>
