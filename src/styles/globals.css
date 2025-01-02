@@ -104,3 +104,12 @@ p, span {
     @apply bg-background text-foreground;
   }
 }
+html,body {
+  height: 100%;
+}
+
+body {
+  font-family: "JetBrains Mono", system-ui;
+  font-optical-sizing: auto;
+  font-weight: 500;
+}

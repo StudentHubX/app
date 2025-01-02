@@ -39,7 +39,6 @@ export const addSocialToUser = async (
   }
 };
 
-
 // Function for student sign-up
 export const studentSignUp = async (data: studentSignUpDetails) => {
   try {
@@ -55,6 +54,7 @@ export const studentSignUp = async (data: studentSignUpDetails) => {
 
     if (accessKey) {
       localStorage.setItem("access-key", accessKey);
+      localStorage.setItem("user-type", "STUDENT");
     } else {
       throw new Error("Access key not provided in response.");
     }
@@ -80,6 +80,7 @@ export const studentLogin = async (data: studentLoginDetails) => {
 
     if (accessKey) {
       localStorage.setItem("access-key", accessKey);
+      localStorage.setItem("user-type", "STUDENT");
     } else {
       throw new Error("Access key not provided in response.");
     }
@@ -116,38 +117,45 @@ export const createPost = async (data: postDetails) => {
     throw error;
   }
 };
-
-export const getFeed = async () => {
+export const getSpaces = async () => {
   const accessToken = localStorage.getItem("access-key");
 
   try {
-    const retrievedPosts = await axios.get(`${backendUrl}/student/feed`, {
+    // Fetch spaces from the backend
+    const response = await axios.get(`${backendUrl}/student/spaces`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
 
-    // Map the response data to match the Post schema
-    const posts = retrievedPosts.data.map((post: any) => {
-      return {
-        id: post.id,
-        title: post.title,
-        content: post.content,
-        createdAt: post.createdAt,
-        student: post.student ? {
-          username: post.student.username,
-          fullname: post.student.fullname,
-        } : null,
-        professional: post.professional ? {
-          username: post.professional.username,
-          fullname: post.professional.fullname,
-        } : null,
-      };
-    });
+    const { joinedSpaces, recommendedSpaces } = response.data;
 
-    return posts;
-  } catch (error) {
-    console.log("Error fetching posts:", error);
-    throw error;
+    // Map the joined spaces
+    const processedJoinedSpaces = joinedSpaces.map((space: any) => ({
+      type: "joined",
+      id: space.id,
+      name: space.name,
+      description: space.description,
+      professionalCoordinator: space.professionalCoordinator?.fullname || "N/A",
+      skillLevel: space.skillLevel || "Unknown",
+    }));
+
+    // Map the recommended spaces
+    const processedRecommendedSpaces = recommendedSpaces.map((space: any) => ({
+      type: "recommended",
+      id: space.id,
+      name: space.name,
+      description: space.description,
+      professionalCoordinator: space.professionalCoordinator?.fullname || "N/A",
+      skillLevel: space.skillLevel || "Unknown",
+    }));
+
+    // Combine both lists into a single array
+
+    const allSpaces = [...processedJoinedSpaces, ...processedRecommendedSpaces]
+    return allSpaces
+  } catch (error: any) {
+    console.error("Error fetching spaces:", error.message);
+    throw new Error("Failed to fetch spaces");
   }
 };

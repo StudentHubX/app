@@ -10,7 +10,10 @@ interface User {
   socials: {
     socialsData: { type: 'INSTAGRAM' | 'X'; username: string }[];
   };
+  role?: string,
+  organization?: string,
   isStudent: boolean;
+  faculty?: string;
 }
 
 interface UserState {

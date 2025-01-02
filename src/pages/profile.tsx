@@ -46,11 +46,11 @@ function useMediaQuery(query: any) {
 const UserPhotoAndCover = () => {
   const user = useUserState((state) => state.user);
   return (
-    <div className="m-10 relative">
-      <div className="bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500 p-20 w-full rounded-xl"></div>
-      <div className="flex items-center mt-[-4rem] relative">
-        <Avatar className="p-14 bg-slate-800 border-2 border-white absolute left-10 top-10 transform -translate-y-1/2 shadow-lg">
-          <AvatarFallback className="text-white text-2xl">
+    <div className="relative mb-12">
+      <div className="bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500 h-48 rounded-lg"></div>
+      <div className="absolute top-20 left-8 transform -translate-y-1/2">
+        <Avatar className="p-14 bg-gray-800 border-4 border-gray-700 shadow-lg">
+          <AvatarFallback className="text-white text-3xl">
             {getInitials(user?.fullname)}
           </AvatarFallback>
         </Avatar>
@@ -64,19 +64,29 @@ const SocialMediaLinks = () => {
   const socials = user?.socials?.socialsData || [];
 
   return (
-    <div className="flex gap-4 mt-4 md:ml-24 items-center justify-center text-center">
+    <div className="flex gap-4 mt-8 items-center justify-center">
       {socials.map((social) => {
         if (social.type === "X" && social.username !== "") {
           return (
-            <Button variant="outline" key="1">
-              <FaXTwitter className="" />@{social.username}
+            <Button
+              variant="outline"
+              className="text-gray-300 hover:bg-gray-700"
+              key="1"
+            >
+              <FaXTwitter className="mr-2" />
+              @{social.username}
             </Button>
           );
         }
         if (social.type === "INSTAGRAM" && social.username !== "") {
           return (
-            <Button variant="outline" key="2">
-              <FaInstagram className="" />@{social.username}
+            <Button
+              variant="outline"
+              className="text-gray-300 hover:bg-gray-700"
+              key="2"
+            >
+              <FaInstagram className="mr-2" />
+              @{social.username}
             </Button>
           );
         }
@@ -88,23 +98,29 @@ const SocialMediaLinks = () => {
 
 const Profile = () => {
   const user = useUserState((state) => state.user);
-  const logout = useUserState((state) => state.logout)
+  const logout = useUserState((state) => state.logout);
+
   return (
-    <div>
+    <div className="p-6 max-w-4xl mx-auto  text-white">
       <UserPhotoAndCover />
-      <div className="md:ml-24 mt-28 text-center md:text-left">
-        <p className="text-lg md:text-xl font-semibold text-gray-800">
-          {user?.fullname}
-        </p>
-        <p className="text-xs md:text-sm text-gray-500">{user?.country}</p>
-        {/* <div className="flex items-center justify-center md:justify-start mt-2">
-          <p className="text-sm md:text-base">@{user?.username}</p>
-        </div> */}
+      <div className="text-center md:text-left md:ml-28 mt-8">
+        <p className="text-2xl font-bold">{user?.fullname}</p>
+        <p className="text-sm text-gray-400">{user?.country}</p>
+        {
+            user?.role && user?.organization && (
+              <p className="text-sm text-gray-400">
+                {user?.role} at {user?.organization}
+              </p>
+            )
+          }
+          <p className="text-sm text-gray-400">
+            {user?.faculty}
+          </p>
       </div>
       <SocialMediaLinks />
-      <div className="flex justify-center md:justify-start mt-4 ml-0 md:ml-24">
-        <Button variant="outline">
-          <FaShare />
+      <div className="flex flex-wrap justify-center md:justify-start mt-8 gap-4">
+        <Button variant="outline" className="hover:bg-gray-700">
+          <FaShare className="mr-2" />
           Share Profile
         </Button>
         <Button variant="destructive" onClick={() => logout()}>
@@ -123,11 +139,13 @@ function DrawerDialogDemo() {
   return isDesktop ? (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="bg-black text-white"> Edit Profile</Button>
+        <Button variant="secondary" className="bg-gray-700 text-white">
+          Edit Profile
+        </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] ">
+      <DialogContent className="sm:max-w-[425px] bg-gray-800 text-gray-300">
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle>Edit Profile</DialogTitle>
           <DialogDescription>
             Make changes to your profile here. Click save when you're done.
           </DialogDescription>
@@ -138,11 +156,13 @@ function DrawerDialogDemo() {
   ) : (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="secondary" className="bg-black text-white">Edit Profile</Button>
+        <Button variant="secondary" className="bg-gray-700 text-white">
+          Edit Profile
+        </Button>
       </DrawerTrigger>
-      <DrawerContent className="p-10">
+      <DrawerContent className="p-6 bg-gray-800 text-gray-300">
         <DrawerHeader>
-          <DrawerTitle>Edit profile</DrawerTitle>
+          <DrawerTitle>Edit Profile</DrawerTitle>
           <DrawerDescription>
             Make changes to your profile here. Click save when you're done.
           </DrawerDescription>
@@ -150,7 +170,9 @@ function DrawerDialogDemo() {
         <ProfileForm />
         <DrawerFooter>
           <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline" className="hover:bg-gray-700">
+              Cancel
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
@@ -196,33 +218,39 @@ function ProfileForm({ className }: any) {
       username,
     }));
     await addSocialToUser(socialsData);
-    
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className={`grid items-start gap-4 ${className}`}
-    >
+    <form onSubmit={handleSubmit} className={`grid gap-4 mt-4 ${className}`}>
       <div className="grid gap-2">
-        <Label htmlFor="X">X</Label>
+        <Label htmlFor="X" className="text-gray-300">
+          X
+        </Label>
         <Input
           type="text"
           id="X"
           value={socials.X}
           onChange={handleInputChange}
+          className="bg-gray-700 text-white"
+          placeholder="Enter your X username"
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="INSTAGRAM">Instagram</Label>
+        <Label htmlFor="INSTAGRAM" className="text-gray-300">
+          Instagram
+        </Label>
         <Input
           type="text"
           id="INSTAGRAM"
           value={socials.INSTAGRAM}
           onChange={handleInputChange}
+          className="bg-gray-700 text-white"
+          placeholder="Enter your Instagram username"
         />
       </div>
-      <Button type="submit">Save changes</Button>
+      <Button type="submit" className="w-full bg-gray-700 text-white">
+        Save changes
+      </Button>
     </form>
   );
 }

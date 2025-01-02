@@ -30,3 +30,8 @@ export interface ProfessionalData {
   fullname: string;
   industryId: number;
 }
+
+export interface ProfessionalLoginDetails {
+  username: string;
+  password: string;
+}

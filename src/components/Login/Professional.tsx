@@ -20,31 +20,43 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "../ui/input";
-import { ProfessionalData } from "@/core/dto/user.dto";
-import { professionalSignUp } from "@/core/professional-http-client";
+import { ProfessionalData, ProfessionalLoginDetails } from "@/core/dto/user.dto";
+import { professionalLogin, professionalSignUp } from "@/core/professional-http-client";
 
 // Schema for signup form
 const signupSchema = z.object({
-  username: z.string().min(2, { message: "Username must be at least 2 characters." }),
+  username: z
+    .string()
+    .min(2, { message: "Username must be at least 2 characters." }),
   age: z.number().positive({ message: "Age is required" }),
   fullname: z.string().min(1, { message: "Full name is required" }),
-  yearsOfExperience: z.number().min(1, {message: "How many years have you been in your industry"}),
-  nameOfOrganization: z.string().min(1, {message: "Tell us the name of your organization"}),
-  role: z.string().min(1, {message: "Tell us your current role at your organization"}),
+  yearsOfExperience: z
+    .number()
+    .min(1, { message: "How many years have you been in your industry" }),
+  nameOfOrganization: z
+    .string()
+    .min(1, { message: "Tell us the name of your organization" }),
+  role: z
+    .string()
+    .min(1, { message: "Tell us your current role at your organization" }),
   country: z.string().min(1, { message: "Country is required" }),
   email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters." }),
   gender: z.string().optional(),
-  industryId: z.number().min(1, {message: "IndustryId is required"})
+  industryId: z.number().min(1, { message: "IndustryId is required" }),
 });
 
 // Schema for login form
 const loginSchema = z.object({
-  username: z.string().min(2, { message: "Username must be at least 2 characters." }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
+  username: z
+    .string()
+    .min(2, { message: "Username must be at least 2 characters." }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters." }),
 });
-
-
 
 const Professional = () => {
   const [isLogin, setIsLogin] = useState(false);
@@ -62,7 +74,7 @@ const Professional = () => {
       nameOfOrganization: "",
       yearsOfExperience: 0,
       role: "",
-      industryId: 212
+      industryId: 212, 
     },
   });
 
@@ -71,8 +83,8 @@ const Professional = () => {
       const signupValues = values as ProfessionalData;
       professionalSignUp(signupValues);
     } else {
-      const loginValues = values as z.infer<typeof loginSchema>;
-      studentLogin(loginValues)
+      const loginValues = values as ProfessionalLoginDetails;
+      professionalLogin(loginValues);
     }
   }
 
@@ -131,9 +143,15 @@ const Professional = () => {
                         <SelectItem value="213">Gaming</SelectItem>
                         <SelectItem value="214">Data Science</SelectItem>
                         <SelectItem value="215">Cybersecurity</SelectItem>
-                        <SelectItem value="216">Hardware Development</SelectItem>
-                        <SelectItem value="217">Software Development</SelectItem>
-                        <SelectItem value="218">Artificial Intelligence</SelectItem>
+                        <SelectItem value="216">
+                          Hardware Development
+                        </SelectItem>
+                        <SelectItem value="217">
+                          Software Development
+                        </SelectItem>
+                        <SelectItem value="218">
+                          Artificial Intelligence
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -147,7 +165,10 @@ const Professional = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Gender</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Gender" />
@@ -183,7 +204,11 @@ const Professional = () => {
                   <FormItem>
                     <FormLabel>Name of Organization</FormLabel>
                     <FormControl>
-                      <Input type="string" placeholder="Name Of Organization" {...field} />
+                      <Input
+                        type="string"
+                        placeholder="Name Of Organization"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -196,7 +221,12 @@ const Professional = () => {
                   <FormItem>
                     <FormLabel>Years of Experience</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="5" {...field} />
+                      <Input
+                        type="number"
+                        placeholder="5"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -234,161 +264,160 @@ const Professional = () => {
                 control={form.control}
                 name="country"
                 render={({ field }) => (
-
-                    <FormItem>
-                      <FormLabel>Country</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Where are you from?" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {[
-                            "Afghanistan",
-                            "Albania",
-                            "Algeria",
-                            "Andorra",
-                            "Angola",
-                            "Antigua and Barbuda",
-                            "Argentina",
-                            "Armenia",
-                            "Australia",
-                            "Austria",
-                            "Azerbaijan",
-                            "Bahamas",
-                            "Bahrain",
-                            "Bangladesh",
-                            "Barbados",
-                            "Belarus",
-                            "Belgium",
-                            "Belize",
-                            "Benin",
-                            "Bhutan",
-                            "Bolivia",
-                            "Bosnia and Herzegovina",
-                            "Botswana",
-                            "Brazil",
-                            "Brunei",
-                            "Bulgaria",
-                            "Burkina Faso",
-                            "Burundi",
-                            "Cabo Verde",
-                            "Cambodia",
-                            "Cameroon",
-                            "Canada",
-                            "Central African Republic",
-                            "Chad",
-                            "Chile",
-                            "China",
-                            "Colombia",
-                            "Comoros",
-                            "Congo",
-                            "Costa Rica",
-                            "Croatia",
-                            "Cuba",
-                            "Cyprus",
-                            "Czech Republic",
-                            "Democratic Republic of the Congo",
-                            "Denmark",
-                            "Djibouti",
-                            "Dominica",
-                            "Dominican Republic",
-                            "East Timor",
-                            "Ecuador",
-                            "Egypt",
-                            "El Salvador",
-                            "Equatorial Guinea",
-                            "Eritrea",
-                            "Estonia",
-                            "Eswatini",
-                            "Ethiopia",
-                            "Fiji",
-                            "Finland",
-                            "France",
-                            "Gabon",
-                            "Gambia",
-                            "Georgia",
-                            "Germany",
-                            "Ghana",
-                            "Greece",
-                            "Grenada",
-                            "Guatemala",
-                            "Guinea",
-                            "Guinea-Bissau",
-                            "Guyana",
-                            "Haiti",
-                            "Honduras",
-                            "Hungary",
-                            "Iceland",
-                            "India",
-                            "Indonesia",
-                            "Iran",
-                            "Iraq",
-                            "Ireland",
-                            "Israel",
-                            "Italy",
-                            "Jamaica",
-                            "Japan",
-                            "Jordan",
-                            "Kazakhstan",
-                            "Kenya",
-                            "Kiribati",
-                            "North Korea",
-                            "South Korea",
-                            "Kuwait",
-                            "Kyrgyzstan",
-                            "Laos",
-                            "Latvia",
-                            "Lebanon",
-                            "Lesotho",
-                            "Liberia",
-                            "Libya",
-                            "Liechtenstein",
-                            "Lithuania",
-                            "Luxembourg",
-                            "Madagascar",
-                            "Malawi",
-                            "Malaysia",
-                            "Maldives",
-                            "Mali",
-                            "Malta",
-                            "Marshall Islands",
-                            "Mauritania",
-                            "Mauritius",
-                            "Mexico",
-                            "Micronesia",
-                            "Moldova",
-                            "Monaco",
-                            "Mongolia",
-                            "Montenegro",
-                            "Morocco",
-                            "Mozambique",
-                            "Myanmar",
-                            "Namibia",
-                            "Nauru",
-                            "Nepal",
-                            "Netherlands",
-                            "New Zealand",
-                            "Nicaragua",
-                            "Niger",
-                            "Nigeria",
-                            // Add more countries as needed
-                          ].map((country) => (
-                            <SelectItem
-                              key={country.toLowerCase().replace(/\s+/g, "-")}
-                              value={country}
-                            >
-                              {country}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
+                  <FormItem>
+                    <FormLabel>Country</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Where are you from?" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {[
+                          "Afghanistan",
+                          "Albania",
+                          "Algeria",
+                          "Andorra",
+                          "Angola",
+                          "Antigua and Barbuda",
+                          "Argentina",
+                          "Armenia",
+                          "Australia",
+                          "Austria",
+                          "Azerbaijan",
+                          "Bahamas",
+                          "Bahrain",
+                          "Bangladesh",
+                          "Barbados",
+                          "Belarus",
+                          "Belgium",
+                          "Belize",
+                          "Benin",
+                          "Bhutan",
+                          "Bolivia",
+                          "Bosnia and Herzegovina",
+                          "Botswana",
+                          "Brazil",
+                          "Brunei",
+                          "Bulgaria",
+                          "Burkina Faso",
+                          "Burundi",
+                          "Cabo Verde",
+                          "Cambodia",
+                          "Cameroon",
+                          "Canada",
+                          "Central African Republic",
+                          "Chad",
+                          "Chile",
+                          "China",
+                          "Colombia",
+                          "Comoros",
+                          "Congo",
+                          "Costa Rica",
+                          "Croatia",
+                          "Cuba",
+                          "Cyprus",
+                          "Czech Republic",
+                          "Democratic Republic of the Congo",
+                          "Denmark",
+                          "Djibouti",
+                          "Dominica",
+                          "Dominican Republic",
+                          "East Timor",
+                          "Ecuador",
+                          "Egypt",
+                          "El Salvador",
+                          "Equatorial Guinea",
+                          "Eritrea",
+                          "Estonia",
+                          "Eswatini",
+                          "Ethiopia",
+                          "Fiji",
+                          "Finland",
+                          "France",
+                          "Gabon",
+                          "Gambia",
+                          "Georgia",
+                          "Germany",
+                          "Ghana",
+                          "Greece",
+                          "Grenada",
+                          "Guatemala",
+                          "Guinea",
+                          "Guinea-Bissau",
+                          "Guyana",
+                          "Haiti",
+                          "Honduras",
+                          "Hungary",
+                          "Iceland",
+                          "India",
+                          "Indonesia",
+                          "Iran",
+                          "Iraq",
+                          "Ireland",
+                          "Israel",
+                          "Italy",
+                          "Jamaica",
+                          "Japan",
+                          "Jordan",
+                          "Kazakhstan",
+                          "Kenya",
+                          "Kiribati",
+                          "North Korea",
+                          "South Korea",
+                          "Kuwait",
+                          "Kyrgyzstan",
+                          "Laos",
+                          "Latvia",
+                          "Lebanon",
+                          "Lesotho",
+                          "Liberia",
+                          "Libya",
+                          "Liechtenstein",
+                          "Lithuania",
+                          "Luxembourg",
+                          "Madagascar",
+                          "Malawi",
+                          "Malaysia",
+                          "Maldives",
+                          "Mali",
+                          "Malta",
+                          "Marshall Islands",
+                          "Mauritania",
+                          "Mauritius",
+                          "Mexico",
+                          "Micronesia",
+                          "Moldova",
+                          "Monaco",
+                          "Mongolia",
+                          "Montenegro",
+                          "Morocco",
+                          "Mozambique",
+                          "Myanmar",
+                          "Namibia",
+                          "Nauru",
+                          "Nepal",
+                          "Netherlands",
+                          "New Zealand",
+                          "Nicaragua",
+                          "Niger",
+                          "Nigeria",
+                          // Add more countries as needed
+                        ].map((country) => (
+                          <SelectItem
+                            key={country.toLowerCase().replace(/\s+/g, "-")}
+                            value={country}
+                          >
+                            {country}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
                 )}
               />
             </>
