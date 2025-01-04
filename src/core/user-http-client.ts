@@ -72,7 +72,7 @@ export const getFeed = async () => {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-      });
+      }); 
   
       // Map the response data to match the Post schema
       const posts = retrievedPosts.data.map((post: any) => {

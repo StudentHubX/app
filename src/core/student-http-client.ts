@@ -1,7 +1,7 @@
 import axios from "axios";
 import { studentSignUpDetails, studentLoginDetails } from "./dto/user.dto";
 import { postDetails } from "./dto/posts.dto";
-
+import { Requests } from "@/lib/utils";
 const backendUrl = "http://localhost:3000";
 
 export const addSocialToUser = async (
@@ -137,6 +137,7 @@ export const getSpaces = async () => {
       name: space.name,
       description: space.description,
       professionalCoordinator: space.professionalCoordinator?.fullname || "N/A",
+      professionalUsername: space.professionalCoordinator?.username || "N/A",
       skillLevel: space.skillLevel || "Unknown",
     }));
 
@@ -147,15 +148,38 @@ export const getSpaces = async () => {
       name: space.name,
       description: space.description,
       professionalCoordinator: space.professionalCoordinator?.fullname || "N/A",
+      professionalUsername: space.professionalCoordinator?.username || "N/A",
       skillLevel: space.skillLevel || "Unknown",
     }));
 
     // Combine both lists into a single array
 
     const allSpaces = [...processedJoinedSpaces, ...processedRecommendedSpaces]
+  console.log(allSpaces)
     return allSpaces
   } catch (error: any) {
     console.error("Error fetching spaces:", error.message);
     throw new Error("Failed to fetch spaces");
   }
 };
+
+export const joinSpace = async (spaceId: number, username: string) => {
+  try {
+    const response = await axios.post(`${backendUrl}/spaces/join`, {
+      spaceId,
+      username
+    })
+    return {
+      request: Requests.ok,
+      message: "Space joined successfully",
+    }
+  } catch (error: any) {
+
+    console.error("Error joining space:", error.message);
+
+    return {
+      request: Requests.notok,
+      message: "Failed to join space",
+    }
+  }
+}

@@ -10,3 +10,7 @@ export function getInitials(fullName: string | undefined): string | undefined {
   const initials = nameParts?.map((part) => part[0].toUpperCase()).join("");
   return initials?.slice(0, 2);
 }
+export enum Requests {
+  ok = 1,
+  notok = 2
+}
